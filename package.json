@@ -1,0 +1,16 @@
+{
+  "name": "family-activity-finder",
+  "version": "1.0.0",
+  "description": "Find family-friendly activities based on location and preferences",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "keywords": ["family", "activities", "finder"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
