@@ -7,10 +7,18 @@
     "start": "node server/index.js",
     "dev": "node server/index.js"
   },
-  "keywords": ["family", "activities", "finder"],
+  "keywords": [
+    "family",
+    "activities",
+    "finder"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
+    "axios": "^1.13.1",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^4.18.2"
   }
 }

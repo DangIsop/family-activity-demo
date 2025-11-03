@@ -54,7 +54,7 @@ distanceSlider.addEventListener('input', function(e) {
 });
 
 // Form submission handler
-form.addEventListener('submit', function(e) {
+form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     // Hide empty state and show loading
@@ -65,14 +65,46 @@ form.addEventListener('submit', function(e) {
     // Show new search button in header
     newSearchBtn.classList.remove('hidden');
 
-    // Simulate API delay
-    setTimeout(function() {
-        displayResults();
-    }, 2000);
+    // Get form data
+    const formData = {
+        city: document.getElementById('city').value,
+        ages: document.getElementById('ages').value,
+        availability: document.getElementById('availability').value,
+        distance: document.getElementById('distance').value,
+        preferences: document.getElementById('preferences').value
+    };
+
+    try {
+        // Call backend API
+        const response = await fetch('/api/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch activities');
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.activities) {
+            displayResults(data.activities);
+        } else {
+            throw new Error(data.error || 'No activities found');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        loadingSection.classList.add('hidden');
+        alert('Sorry, we could not find activities. Please try again.');
+        emptyState.classList.remove('hidden');
+    }
 });
 
 // Display results function
-function displayResults() {
+function displayResults(activities) {
     // Hide loading
     loadingSection.classList.add('hidden');
 
@@ -80,7 +112,7 @@ function displayResults() {
     activitiesList.innerHTML = '';
 
     // Create activity cards with numbered badges
-    dummyActivities.forEach(function(activity, index) {
+    activities.forEach(function(activity, index) {
         const card = document.createElement('div');
         card.className = 'activity-card';
 
@@ -117,7 +149,7 @@ function displayResults() {
         description.className = 'activity-description';
         description.textContent = activity.description;
 
-        // Meta information (location and distance)
+        // Meta information (location, distance, and time)
         const meta = document.createElement('div');
         meta.className = 'activity-meta';
 
@@ -131,6 +163,14 @@ function displayResults() {
 
         meta.appendChild(locationMeta);
         meta.appendChild(distanceMeta);
+
+        // Add time information if available
+        if (activity.time) {
+            const timeMeta = document.createElement('div');
+            timeMeta.className = 'meta-item';
+            timeMeta.innerHTML = `🕐 ${activity.time}`;
+            meta.appendChild(timeMeta);
+        }
 
         // Assemble card
         content.appendChild(header);
